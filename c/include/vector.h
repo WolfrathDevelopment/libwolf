@@ -1,5 +1,5 @@
-#ifndef _WOLFLIB_VECTOR_H
-#define _WOLFLIB_VECTOR_H
+#ifndef _LIBWOLF_VECTOR_H
+#define _LIBWOLF_VECTOR_H
 
 #include "types.h"
 #include <stdlib.h>
@@ -128,4 +128,4 @@ static inline void vector_destroy(Vector* v){
 }
 #endif
 
-#endif /* _WOLFLIB_VECTOR_H */
+#endif /* _LIBWOLF_VECTOR_H */
