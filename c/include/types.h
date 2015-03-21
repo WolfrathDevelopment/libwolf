@@ -1,9 +1,10 @@
-#ifndef _TYPES_H
-#define _TYPES_H
+#ifndef _WOLFLIB_TYPES_H
+#define _WOLFLIB_TYPES_H
 
 #include <inttypes.h>
 
 #ifndef NULL
 #define NULL ((void*)0)
+#endif
 
-#endif /* _TYPES_H */
+#endif /* _WOLFLIB_TYPES_H */
