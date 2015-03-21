@@ -5,16 +5,16 @@
 
 static clock_t tstart, tend;
 
-static inline void BEGIN_CLOCK(){
+static inline void CLOCK_BEGIN(){
 	tstart = clock();
 }
 
-static inline void STOP_CLOCK(){
+static inline void CLOCK_STOP(){
 	tend = clock();
 }
 
 static inline double CLOCK_ELAPSED(){
-	return ((double)(tend - tstart)) / CLOCKS_PER_SEC;
+	return (((double)(tend - tstart)) / CLOCKS_PER_SEC);
 }
 
 

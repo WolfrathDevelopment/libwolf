@@ -1,7 +1,8 @@
-CC= gcc
+CC= g++
 CFLAGS= -c -g -Wall -I include/
-SOURCES= $(shell find * -type f -name '*.c')
-OBJECTS= $(SOURCES:.c=.o)
+SOURCES= $(shell find * -type f -name '*.c[p]*' -not -path "tests/*")
+COBJECTS= $(SOURCES:.c=.o)
+OBJECTS= $(COBJECTS:.cpp=.o)
 OUTPUT= main
 
 LIBS=
@@ -14,18 +15,20 @@ ifeq ($(UNAME), "Darwin")
 LIBS=
 endif
 
-
 all: $(SOURCES) $(OUTPUT)
 	@echo "Done."
 
 $(OUTPUT): $(OBJECTS)
-	@$(CC) $(OBJECTS) -o $@ $(LIBS)
 	@echo "LD $@"
+	@$(CC) $(OBJECTS) -o $@ $(LIBS)
 
 .c.o:
-	@$(CC) $(CFLAGS) $< -o $@
 	@echo "CC $<"
+	@$(CC) $(CFLAGS) $< -o $@
 	
+.cpp.o:
+	@echo "CC $<"
+	@$(CC) $(CFLAGS) $< -o $@
 
 clean:
 	@-rm -rf $(OBJECTS) $(OUTPUT)

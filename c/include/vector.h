@@ -6,6 +6,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
  * Vectors are such useful c++ containers,
  * seems helpful to have an implementation for C
@@ -91,7 +95,11 @@ static inline void vector_push_back(Vector* v, void* elem){
 		v->num_allocated += v->lb_alloc_advise;
 	}
 
-	memcpy(v->mem + (size * elements),elem,size);
+	if(size == 4)
+		*((uint32_t*)(v->mem + (size * elements))) = *((uint32_t*)elem);
+	else
+		memcpy(v->mem + (size * elements),elem,size);
+	
 	v->num_elements++;
 }
 
@@ -114,5 +122,10 @@ static inline int vector_size(Vector* v){
 static inline void vector_destroy(Vector* v){
 	free(v->mem);
 }
+
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _WOLFLIB_VECTOR_H */
