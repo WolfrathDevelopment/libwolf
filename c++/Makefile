@@ -1,4 +1,4 @@
-CC= gcc
+CC= g++
 CFLAGS= -c -g -Wall -I include/
 
 CSOURCES= $(shell find * -type f -name '*.c' -not -path "tests/*")

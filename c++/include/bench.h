@@ -1,7 +1,7 @@
 #ifndef _LIBWOLF_BENCHMARK_H
 #define _LIBWOLF_BENCHMARK_H
 
-#include <time.h>
+#include <ctime>
 
 static clock_t tstart, tend;
 
