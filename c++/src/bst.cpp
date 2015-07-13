@@ -1,9 +1,13 @@
 #include "bst.h"
 #include "types.h"
+#include "debug.h"
 #include <cstdlib>
 #include <iostream>
 
-bst_node* bst::nodeAlloc(){
+using std::cout;
+using std::endl;
+
+static bst_node* bstNodeAlloc(){
 
 	bst_node* tmp = new bst_node;
 	tmp->left = tmp->right = tmp->parent = NULL;
@@ -13,7 +17,17 @@ bst_node* bst::nodeAlloc(){
 }
 
 bst::bst(){
-	root = NULL;
+	pRoot = NULL;
+}
+
+bst_safe::bst_safe(){
+
+	int rc;
+
+	pRoot	= NULL;
+	rc		= pthread_mutex_init(&pLock, NULL);
+
+	ASSERT(!rc, "failed to init mutex in bst_safe instance");
 }
 
 static bst_node* recurse(bst_node* n, int val){
@@ -28,13 +42,13 @@ static bst_node* recurse(bst_node* n, int val){
 }
 
 bst_node* bst::find(int val){
-	return recurse(root,val);
+	return recurse(pRoot,val);
 }
 
 bool bst::insert(int data){
 
-	bst_node** tree = &root;	
-	bst_node* n = nodeAlloc();
+	bst_node** tree = &pRoot;	
+	bst_node* n = bstNodeAlloc();
 
 	if(!n)
 		return false;
@@ -84,7 +98,7 @@ bool bst::insert(int data){
 
 bst_node* bst::remove(int data){
 
-	bst_node** tree = &root;
+	bst_node** tree = &pRoot;
 
 	/* Must free node returned from this function! */
 
@@ -117,7 +131,7 @@ bst_node* bst::remove(int data){
 		else{
 			repl = tmp;
 
-			if(BST_LEFT_NODE(tmp))
+			if(tmp->isLeftNode())
 				tmp->parent->left = NULL;
 			else
 				tmp->parent->right = NULL;
@@ -132,7 +146,7 @@ bst_node* bst::remove(int data){
 			*tree = del->left ? del->left : del->right;
 			del->parent = NULL;
 		}
-		else if(BST_LEFT_NODE(del))
+		else if(del->isLeftNode())
 			del->parent->left = del->left ? del->left : del->right;
 		else
 			del->parent->right = del->left ? del->left : del->right;
@@ -141,7 +155,7 @@ bst_node* bst::remove(int data){
 		
 		if(del == *tree)
 			*tree = NULL;
-		else if(BST_LEFT_NODE(del))
+		else if(del->isLeftNode())
 			del->parent->left = NULL;
 		else
 			del->parent->right = NULL;
@@ -155,7 +169,7 @@ bst_node* bst::remove(int data){
 static void pad(char ch, int n){
 
 	for (int  i = 0; i < n; i++)
-		std::cout << ch;
+		cout << ch;
 }
 
 static void drawTree(bst_node* n, int deep){
@@ -163,22 +177,44 @@ static void drawTree(bst_node* n, int deep){
 	if(!n) {
 
 		pad('\t', deep);
-		std::cout << "~" << std::endl;
+		cout << "~" << endl;
 		return;
 	}
 
 	drawTree(n->right, deep + 1);
 	pad('\t', deep);
-	std::cout << n->data << std::endl;
+	cout << n->data << endl;
 	drawTree(n->left, deep + 1);
+}
+
+bst_node* bst_safe::remove(int data){
+
+	bst_node* ret;
+
+	pthread_mutex_lock(&pLock);
+	ret = bst::remove(data);
+	pthread_mutex_unlock(&pLock);
+
+	return ret;
+}
+
+bool bst_safe::insert(int data){
+
+	bool ret;
+
+	pthread_mutex_lock(&pLock);
+	ret = bst::insert(data);
+	pthread_mutex_unlock(&pLock);
+
+	return ret;
 }
 
 /*************************/
 
 void bst::print(){
 
-	std::cout << "BST PRINT:" << std::endl;
-	drawTree(root, 0);
+	cout << "BST PRINT:" << endl;
+	drawTree(pRoot, 0);
 }
 
 
@@ -193,5 +229,9 @@ static void chainsaw(bst_node* n){
 }
 
 bst::~bst(){
-	chainsaw(root);
+	chainsaw(pRoot);
+}
+
+bst_safe::~bst_safe(){
+	pthread_mutex_destroy(&pLock);
 }

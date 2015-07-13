@@ -4,7 +4,7 @@
 
 int main(){
 
-	bst tree;
+	bst_safe tree;
 
 	tree.insert(5);
 	tree.insert(3);

@@ -1,51 +1,78 @@
 #ifndef _LIBWOLF_BST_H
 #define _LIBWOLF_BST_H
 
-typedef struct _bst_node {
+#include "types.h"
 
-	struct _bst_node* left;
-	struct _bst_node* right;
-	struct _bst_node* parent;
+class bst;
+class bst_safe;
+class bst_node;
+
+class bst_node {
+
+public:
+
+	bst_node* left;
+	bst_node* right;
+	bst_node* parent;
 
 	int data;
 
-} bst_node;
+	/* Helper Functions */
 
+	inline bool isLeafNode();
+	inline bool isLeftNode();
+	inline bool isRightNode();
+};
 
-/* Helper Functions */
-
-static inline bool BST_LEAF_NODE(bst_node* n){
-	return (!(n->left) && !(n->right));
+inline bool bst_node::isLeafNode(){
+	return (!(this->left) && !(this->right));
 }
 
-static inline bool BST_LEFT_NODE(bst_node* n){
-	return (n == n->parent->left);
+inline bool bst_node::isLeftNode(){
+	return (this == this->parent->left);
 }
 
-static inline bool BST_RIGHT_NODE(bst_node* n){
-	return (n == n->parent->right);
+inline bool bst_node::isRightNode(){
+	return (this == this->parent->right);
 }
 
+/* Binary Search Tree */
 
 class bst {
+
+	friend class bst_safe;
 
 public:
 
 	bst();
 	~bst();
 
-	bool insert(int);
-
 	bst_node* remove(int);
 	bst_node* find(int);
 
 	void print();
+	bool insert(int);
 
 private:
 
-	bst_node*	root;
-	bst_node*	nodeAlloc();
+	bst_node*	pRoot;
+};
 
+/* Thread Safe Binary Search Tree */
+
+class bst_safe : public bst {
+
+public:
+
+	bst_safe();
+	~bst_safe();
+
+	bst_node* remove(int);
+	bool insert(int);
+
+private:
+
+	pthread_mutex_t		pLock;
 };
 
 #endif /* _LIBWOLF_BST_H */
