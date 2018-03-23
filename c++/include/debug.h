@@ -24,21 +24,16 @@ static inline double CLOCK_ELAPSED(){
 
 /* Misc debugging */
 
-static inline void ASSERT(int expr){
+#define WL_ASSERT(expr,msg) \
+	_ASSERT(expr, msg, __FILE__, __LINE__)
+
+static inline void _ASSERT(int expr, const char* msg, const char* file, uint64_t lineNumber) {
 
 	if(expr)
 		return;
 
-	std::cerr << "assert failed"<< std::endl;
-	exit(EXIT_FAILURE);
-}
-
-static inline void ASSERT(int expr, const char* msg){
-
-	if(expr)
-		return;
-
-	std::cerr << "assert failed: " << msg << std::endl;
+	std::cerr << "Assert failed: " << msg << std::endl;
+	std::cerr << file << " line " << lineNumber << msg << std::endl;
 	exit(EXIT_FAILURE);
 }
 

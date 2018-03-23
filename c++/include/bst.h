@@ -3,10 +3,11 @@
 
 #include "types.h"
 
+// Forward declaration 
 class bst;
-class bst_safe;
 class bst_node;
 
+//template <typename BST_T>
 class bst_node {
 
 public:
@@ -15,6 +16,7 @@ public:
 	bst_node* right;
 	bst_node* parent;
 
+	//BST_T data;
 	int data;
 
 	/* Helper Functions */
@@ -29,18 +31,24 @@ inline bool bst_node::isLeafNode(){
 }
 
 inline bool bst_node::isLeftNode(){
-	return (this == this->parent->left);
+	bool retVal = false;
+	if(this->parent) {
+		retVal = (this == this->parent->left);
+	}
+	return retVal;
 }
 
 inline bool bst_node::isRightNode(){
-	return (this == this->parent->right);
+	bool retVal = false;
+	if(this->parent) {
+		retVal = (this == this->parent->right);
+	}
+	return retVal;
 }
 
 /* Binary Search Tree */
 
 class bst {
-
-	friend class bst_safe;
 
 public:
 
@@ -53,26 +61,11 @@ public:
 	void print();
 	bool insert(int);
 
-private:
+protected:
 
-	bst_node*	pRoot;
-};
-
-/* Thread Safe Binary Search Tree */
-
-class bst_safe : public bst {
-
-public:
-
-	bst_safe();
-	~bst_safe();
-
-	bst_node* remove(int);
-	bool insert(int);
-
-private:
-
+	bst_node*		pRoot;
 	pthread_mutex_t		pLock;
 };
+
 
 #endif /* _LIBWOLF_BST_H */
