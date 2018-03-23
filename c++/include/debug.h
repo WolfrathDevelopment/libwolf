@@ -33,7 +33,7 @@ static inline void _ASSERT(int expr, const char* msg, const char* file, uint64_t
 		return;
 
 	std::cerr << "Assert failed: " << msg << std::endl;
-	std::cerr << file << " line " << lineNumber << msg << std::endl;
+	std::cerr << file << " line " << lineNumber << std::endl;
 	exit(EXIT_FAILURE);
 }
 
